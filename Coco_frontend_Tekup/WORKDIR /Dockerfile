@@ -2,22 +2,28 @@
 FROM node:20-alpine as build  
 
 # 2. Définition du répertoire de travail  
-#WORKDIR /app  
+WORKDIR /app   
 
-# 3. Copie des fichiers du projet dans le conteneur  
+# 3. Copie des fichiers package.json et package-lock.json pour optimiser le cache  
+COPY package*.json ./  
+
+# 4. Installation des dépendances  
+RUN npm install  
+
+# 5. Copie des autres fichiers du projet  
 COPY . .  
 
-# 4. Installation des dépendances et build du projet  
-RUN npm install && npm run build  
+# 6. Build du projet  
+RUN npm run build  
 
-# 5. Utilisation de Nginx comme serveur web pour le frontend  
+# 7. Utilisation de Nginx comme serveur web pour le frontend  
 FROM nginx:alpine  
 
-# 6. Copie des fichiers générés vers le dossier de déploiement de Nginx  
-COPY --from=build /app/dist/* /usr/share/nginx/html  
+# 8. Copie des fichiers générés vers le dossier de déploiement de Nginx  
+COPY --from=build /app/dist /usr/share/nginx/html  
 
-# 7. Exposition du port 80  
+# 9. Exposition du port 80  
 EXPOSE 80  
 
-# 8. Démarrage de Nginx  
+# 10. Démarrage de Nginx  
 CMD ["nginx", "-g", "daemon off;"]
