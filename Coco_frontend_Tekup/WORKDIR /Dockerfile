@@ -2,7 +2,7 @@
 FROM node:20-alpine as build  
 
 # 2. Définition du répertoire de travail  
-WORKDIR /app  
+#WORKDIR /app  
 
 # 3. Copie des fichiers du projet dans le conteneur  
 COPY . .  
